@@ -1,0 +1,123 @@
+Fala:
+(begin)
+
+pode mais tamanho_dialogo, dialogo entre nome_personagem e protagonista, a ideia é que o protagonista e nome_personagem não se conhecem, identificador a partir de id_plus_tamanhoDialogo
+
+- Artoria
+- Gilgamesh
+- Medusa
+- Jeanne
+- Emiya
+- Karna
+- Heracles
+- Mash
+- Angra Mainyu
+- Cu Chulainn
+- Iskandar
+- Scáthach
+- Merlin
+- Lancelot
+- Nero
+- Tamamo
+- Okita
+- Arjuna
+- Medb
+- Siegfried
+- François
+- Elizabeth
+- Napoleon
+- Altera
+- Gawain
+- Tristan
+- Mordred
+- Cleópatra
+- Nightingale
+- Atalanta
+- Ivan
+- Da Vinci
+- Mata Hari
+- Spartacus
+- Ereshkigal
+- Romulus
+- Billy the Kid
+- Dante
+- Cleopatra
+- Leonidas
+- Sun Tzu
+- Beowulf
+- Ramsés
+- Cleo
+- Tamerlane
+- Aladdin
+- Ragnar
+- Morgana
+- Genghis Khan
+- Joan of Arc
+- Marco Polo
+- Robin Hood
+- Vlad III
+- Kublai Khan
+- Ozymandias
+- Quetzalcoatl
+
+(end)
+
+NPC:
+(begin)
+Artoria
+Gilgamesh
+Medusa
+Jeanne
+Emiya
+Karna
+Heracles
+Mash
+Angra Mainyu
+Cu Chulainn
+Iskandar
+Scáthach
+Merlin
+Lancelot
+Nero
+Tamamo
+Okita
+Arjuna
+Medb
+Siegfried
+François
+Elizabeth
+Napoleon
+Altera
+Gawain
+Tristan
+Mordred
+Cleópatra
+Nightingale
+Atalanta
+Ivan
+Da Vinci
+Mata Hari
+Spartacus
+Ereshkigal
+Romulus
+Billy the Kid
+Dante
+Cleopatra
+Leonidas
+Sun Tzu
+Beowulf
+Ramsés
+Cleo
+Tamerlane
+Aladdin
+Ragnar
+Morgana
+Genghis Khan
+Joan of Arc
+Marco Polo
+Robin Hood
+Vlad III
+Kublai Khan
+Ozymandias
+Quetzalcoatl
+(end)
