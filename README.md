@@ -50,8 +50,8 @@ Para desinstalar o jogo basta rodar ```./install.sh desinstalar```.
     - [x] done
   - [Modelo Relacional](/docs/rascunhoMREL.md)
     - [ ] to do
-    - [x] doing
-    - [ ] done
+    - [ ] doing
+    - [x] done
   - Dicionário de Dados
     - [ ] to do
     - [x] doing
@@ -81,12 +81,12 @@ Para desinstalar o jogo basta rodar ```./install.sh desinstalar```.
     - [ ] doing
     - [ ] done
 - Módulo 3:
-  - [x] to do
-  - [ ] doing
+  - [ ] to do
+  - [x] doing
   - [ ] done
   - Triggers e Stored Procedures
-    - [x] to do
-    - [ ] doing
+    - [ ] to do
+    - [x] doing
     - [ ] done
   - Views
     - [x] to do
