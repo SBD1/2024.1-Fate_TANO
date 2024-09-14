@@ -30,10 +30,10 @@ Tenha em seu computar linux instalado:
 Acesse a pasta app e rode o script:
 Instalado e configurado, recomendo que configure o Docker para possa usá-lo sem o comando sudo, se não entre no arquivo install.sh e insere sudo antes dos comando docker.
 
-Assim para subir o banco insira no terminal '''./install.sh instalar'''
-e para jogar '''./start.sh'''
+Assim para subir o banco insira no terminal ```./install.sh instalar```
+e para jogar ```./start.sh```
 
-Para remover basta rodar '''./install.sh desinstalar'''.
+Para remover basta rodar ```./install.sh desinstalar```.
 
 ## Módulos
 - Módulo 1:
