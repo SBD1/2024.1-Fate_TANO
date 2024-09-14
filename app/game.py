@@ -164,7 +164,6 @@ class GameApp(tk.Tk):
     def load_game(self):
         """Carrega um jogo existente."""
         self.game_number = 1  # Aqui você pode adicionar lógica para carregar jogos diferentes
-        self.initialize_database()
         self.show_game_screen()
 
     def initialize_database(self):
