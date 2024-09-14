@@ -31,9 +31,34 @@ $criar_enums$ LANGUAGE plpgsql;
 
 --- Movimentacao Personagem
 
-CREATE OR REPLACE FUCTION movimento_personagem(id_local INT) RETURNS void AS $movimento_personagem$
+CREATE OR REPLACE FUNCTION movimento_personagem(movimento CHAR) RETURNS void AS $movimento_personagem$
 BEGIN
-    IF (SELECT * FROM sala s  WHERE s.local_n = id_local OR s.local_s = id_local OR s.local_l = id_local OR s.local_o = id_local) THEN
-    UPDATE personagem SET localizao = id_local;
+    IF (movimento = 'up') THEN
+        UPDATE personagem p SET localizacao = s.local_n FROM sala s WHERE p.localizacao = s.id_local;
+    ELSIF (movimento = 'down') THEN 
+        UPDATE personagem p SET localizacao = s.local_s FROM sala s WHERE p.localizacao = s.id_local;
+    ELSIF (movimento = 'right') THEN
+        UPDATE personagem p SET localizacao = s.local_l FROM sala s WHERE p.localizacao = s.id_local;
+    ELSIF (movimento = 'left') THEN
+        UPDATE personagem p SET localizacao = s.local_o FROM sala s WHERE p.localizacao = s.id_local;
+	END IF;
 END;
 $movimento_personagem$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION drop_all() RETURNS void AS $drop_all$
+DECLARE
+    r RECORD;
+BEGIN
+    -- Loop sobre todas as tabelas no esquema atual
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') 
+    LOOP
+        EXECUTE 'DROP TABLE IF EXISTS ' || r.tablename || ' CASCADE';
+    END LOOP;
+    -- Loop sobre todos os tipos definidos pelo usuário
+    FOR r IN (SELECT typname FROM pg_type WHERE typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public') AND typtype = 'c') LOOP
+        -- Executa o comando DROP TYPE para cada tipo encontrado
+        EXECUTE 'DROP TYPE IF EXISTS ' || quote_ident(r.typname) || ' CASCADE';
+    END LOOP;
+END
+$drop_all$ LANGUAGE plpgsql;

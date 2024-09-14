@@ -232,14 +232,9 @@ END;
 $tabelas_personagem$ LANGUAGE plpgsql;
 
 
-
-CREATE OR REPLACE FUNCTION criar_tabelas() RETURNS void AS $criar_tabelas$
+CREATE OR REPLACE FUNCTION tabelas_he_iInimigo() RETURNS void AS $tabelas_he_iInimigo$
 BEGIN
-	
-	
-	
-	
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'habilidade_evoluida') THEN
+IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'habilidade_evoluida') THEN
         EXECUTE 'CREATE TABLE habilidade_evoluida (
     habilidade INT REFERENCES evolucao_habilidade(habilidade),
     evolucao_habilidade INT REFERENCES evolucao_habilidade(id_evolucao)
@@ -303,7 +298,12 @@ BEGIN
     FOREIGN KEY (inimigo) REFERENCES inimigo(id_inimigo)
 );';
     END IF;
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'item') THEN
+END;
+$tabelas_he_iInimigo$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION tabela_item() RETURNS void AS $tabela_item$
+BEGIN
+IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'item') THEN
         EXECUTE 'CREATE TABLE item (
     id_item INT PRIMARY KEY,
     tipo_item TIPO_ITEM NOT NULL
@@ -335,14 +335,6 @@ BEGIN
     b_defesa INT NOT NULL,
     b_carisma INT NOT NULL,
     FOREIGN KEY (item) REFERENCES item(id_item)
-);';
-    END IF;
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'consumivel_habilidade') THEN
-        EXECUTE 'CREATE TABLE consumivel_habilidade (
-    consumivel INT PRIMARY KEY,
-    tipo_consumivel TIPO_CONSUMIVEL NOT NULL,
-    habilidade INT NOT NULL REFERENCES habilidade(id_habilidade),
-    CHECK(tipo_consumivel IN (''pergaminho''))
 );';
     END IF;
 	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'acessorio') THEN
@@ -378,50 +370,7 @@ BEGIN
     FOREIGN KEY (item) REFERENCES item(id_item)
 );';
     END IF;
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'arma_habilidade') THEN
-        EXECUTE 'CREATE TABLE arma_habilidade (
-    id_arma_habilidade INT PRIMARY KEY,
-    arma INT REFERENCES arma(item),
-    habilidade INT REFERENCES habilidade(id_habilidade),
-    tipo_habilidade TIPO_HABILIDADE NOT NULL,
-    CHECK(tipo_habilidade IN (''habilidade_especial'',''noble_phantasm''))
-);';
-    END IF;
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'evolucao_arma') THEN
-        EXECUTE 'CREATE TABLE evolucao_arma (
-    id_evolucao INT PRIMARY KEY,
-    bonus_dano INT NOT NULL,
-    bonus_hdano INT NOT NULL,
-    arma INT NOT NULL REFERENCES arma(item),
-    tipo_item TIPO_ITEM NOT NULL,
-    num_evolucao INT,
-    CHECK(tipo_item IN (''arma'')),
-	UNIQUE(arma)
-);';
-    END IF;
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'material_req') THEN
-        EXECUTE 'CREATE TABLE material_req (
-    material INT PRIMARY KEY,
-    evolucao INT REFERENCES evolucao_arma(id_evolucao),
-    qtd INT,
-    FOREIGN KEY (material) REFERENCES material(item)
-);';
-    END IF;
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'arma_evoluida') THEN
-        EXECUTE 'CREATE TABLE arma_evoluida (
-    arma INT REFERENCES evolucao_arma(arma),
-    evolucao_arma INT REFERENCES evolucao_arma(id_evolucao)
-);';
-    END IF;
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'conjunto_armadura') THEN
-        EXECUTE 'CREATE TABLE conjunto_armadura (
-    id_conjunto INT PRIMARY KEY,
-    noble_phantasm INT REFERENCES habilidade(id_habilidade),
-    tipo_habilidade TIPO_HABILIDADE,
-    CHECK(tipo_habilidade IN (''noble_phantasm''))
-);';
-    END IF;
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'armadura') THEN
+    IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'armadura') THEN
         EXECUTE 'CREATE TABLE armadura (
     item INT PRIMARY KEY,
     nome CHAR(20),
@@ -443,6 +392,67 @@ BEGIN
     CHECK(tipo_habilidade in (''habilidade_especial''))
 );';
     END IF;
+END;
+$tabela_item$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION tabelas_ch_ea() RETURNS void AS $tabelas_ch_ea$
+BEGIN
+IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'consumivel_habilidade') THEN
+        EXECUTE 'CREATE TABLE consumivel_habilidade (
+    consumivel INT PRIMARY KEY,
+    tipo_consumivel TIPO_CONSUMIVEL NOT NULL,
+    habilidade INT NOT NULL REFERENCES habilidade(id_habilidade),
+    CHECK(tipo_consumivel IN (''pergaminho''))
+);';
+    END IF;
+	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'arma_habilidade') THEN
+        EXECUTE 'CREATE TABLE arma_habilidade (
+    id_arma_habilidade INT PRIMARY KEY,
+    arma INT REFERENCES arma(item),
+    habilidade INT REFERENCES habilidade(id_habilidade),
+    tipo_habilidade TIPO_HABILIDADE NOT NULL,
+    CHECK(tipo_habilidade IN (''habilidade_especial'',''noble_phantasm''))
+);';
+    END IF;
+	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'evolucao_arma') THEN
+        EXECUTE 'CREATE TABLE evolucao_arma (
+    id_evolucao INT PRIMARY KEY,
+    bonus_dano INT NOT NULL,
+    bonus_hdano INT NOT NULL,
+    arma INT NOT NULL REFERENCES arma(item),
+    tipo_item TIPO_ITEM NOT NULL,
+    num_evolucao INT,
+    CHECK(tipo_item IN (''arma'')),
+	UNIQUE(arma)
+);';
+    END IF;
+END;
+$tabelas_ch_ea$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION tabelas_mr_missao() RETURNS void AS $tabelas_mr_missao$
+BEGIN
+IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'material_req') THEN
+        EXECUTE 'CREATE TABLE material_req (
+    material INT PRIMARY KEY,
+    evolucao INT REFERENCES evolucao_arma(id_evolucao),
+    qtd INT,
+    FOREIGN KEY (material) REFERENCES material(item)
+);';
+    END IF;
+	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'arma_evoluida') THEN
+        EXECUTE 'CREATE TABLE arma_evoluida (
+    arma INT REFERENCES evolucao_arma(arma),
+    evolucao_arma INT REFERENCES evolucao_arma(id_evolucao)
+);';
+    END IF;
+	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'conjunto_armadura') THEN
+        EXECUTE 'CREATE TABLE conjunto_armadura (
+    id_conjunto INT PRIMARY KEY,
+    noble_phantasm INT REFERENCES habilidade(id_habilidade),
+    tipo_habilidade TIPO_HABILIDADE,
+    CHECK(tipo_habilidade IN (''noble_phantasm''))
+);';
+    END IF;
 	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'inventario_item') THEN
         EXECUTE 'CREATE TABLE inventario_item (
     item INT REFERENCES item(id_item),
@@ -462,7 +472,12 @@ BEGIN
     isRealizada BOOLEAN NOT NULL
 );';
     END IF;
-	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'missao_doing') THEN
+END;
+$tabelas_mr_missao$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION tabelas_md_ri() RETURNS void AS $tabelas_md_ri$
+BEGIN
+IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'missao_doing') THEN
         EXECUTE 'CREATE TABLE missao_doing (
     missao INT PRIMARY KEY,
     req_atual INT NOT NULL,
@@ -485,6 +500,11 @@ BEGIN
     FOREIGN KEY (item) REFERENCES item(id_item)
 );';
     END IF;
+END;
+$tabelas_md_ri$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION tabelas_di_di() RETURNS void AS $tabelas_di_di$
+BEGIN
 	IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'dinheiro_e_item') THEN
         EXECUTE 'CREATE TABLE dinheiro_e_item (
 	recompensa INT REFERENCES recompensa(id_recompensa),
@@ -591,4 +611,4 @@ BEGIN
 );';
     END IF;
 END;
-$criar_tabelas$ LANGUAGE plpgsql;
+$tabelas_di_di$ LANGUAGE plpgsql;

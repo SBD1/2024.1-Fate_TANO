@@ -1,255 +1,47 @@
 import psycopg2
+from components import criar_tabelas as ct
+from components import triggers_functions as tf
 
 def get_game_db_connection(game_number):
     db_name = f'game_{game_number}_db'
     return psycopg2.connect(
         host='localhost',
-        port='5432',
+        port='5434',
         user='your_user',
         password='your_password',
         dbname=db_name
     )
 
+def delete(self):
+    conn = get_game_db_connection(self.game_number)
+    cur = conn.cursor()
+
+    cur.execute('SELECT drop_all();')
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def criar_tabelas(self):
     conn = get_game_db_connection(self.game_number)
     cur = conn.cursor()
 
-    cur.execute('''
-CREATE TYPE LOCAL_TIPO AS ENUM ('loja', 'pousada', 'oficina','grama', 'agua', 'ruina', 'buraco', 'caverna', 'masmorra','residencia');
-
-CREATE TYPE TIPO_RESIDENCIA AS ENUM ('loja', 'pousada', 'oficina');
-
-CREATE TYPE TIPO_CLASSE AS ENUM ('saber', 'lancer', 'archer', 'rider', 'caster', 'assassin', 'berserker');
-
-CREATE TYPE TIPO_EXCLASSE AS ENUM ('ruler', 'avenger', 'moon_cancer', 'alter_ego', 'foreigner', 'pretender', 'shielder', 'beast');
-
-CREATE TYPE RANK_ AS ENUM ('ex', 'sss', 'ss', 's', 'a', 'b', 'c', 'd', 'e', 'f', 'g');
-
-CREATE TYPE TIPO_HABILIDADE AS ENUM ('ativa', 'passiva', 'habilidade_especial', 'noble_phantasm');
-
-CREATE TYPE ALIGN AS ENUM ('good', 'neutral', 'evil');
-
-CREATE TYPE TIPO_INIMIGO AS ENUM ('comum', 'elite', 'miniboss', 'boss', 'raid_boss', 'special', 'event');
-
-
-CREATE TYPE TIPO_ITEM AS ENUM ('material', 'consumivel', 'acessorio', 'arma', 'armadura', 'artefato', 'item', 'magico');
-
-CREATE TYPE TIPO_MATERIAL AS ENUM ('lixo', 'mineral', 'raro', 'comum', 'toxico');
-
-CREATE TYPE TIPO_CONSUMIVEL AS ENUM ('pocao', 'pergaminho', 'alimento');
-
-CREATE TYPE TIPO_ARMADURA AS ENUM ('cabeca', 'torso', 'mao_direita', 'mao_esquerda', 'duas_maos', 'calca', 'pe', 'acessorio_1', 'acessorio_2', 'acessorio_3');
-
-''')
-
-    cur.execute('''
-            CREATE TABLE habilidade (
-                id_habilidade INT PRIMARY KEY,
-                tipo_habilidade TIPO_HABILIDADE NOT NULL,
-                tipo_classe TIPO_CLASSE NOT NULL,
-                numero INT NOT NULL,
-                descricao VARCHAR(255),
-                cooldown INT,
-                custo_mana INT NOT NULL,
-                ranque RANK_ NOT NULL
-            );
-
-            CREATE TABLE habilidade_extra (
-                id_habilidade_extra INT PRIMARY KEY,
-                tipo_habilidade TIPO_HABILIDADE NOT NULL,
-                tipo_exclasse TIPO_EXCLASSE NOT NULL,
-                numero INT NOT NULL,
-                descricao VARCHAR(255),
-                cooldown INT,
-                custo_mana INT NOT NULL,
-                ranque RANK_ NOT NULL,
-                CHECK(ranque IN ('ex')),
-                CHECK(tipo_habilidade IN ('noble_phantasm'))
-            );
-        ''')
-
-        # Criar tabelas para classes
-    cur.execute('''
-            CREATE TABLE classe (
-    id_classe INT PRIMARY KEY,
-    tipo_classe TIPO_CLASSE NOT NULL,
-    b_inteligencia INT NOT NULL,
-    b_destreza INT NOT NULL,
-    b_sabedoria INT NOT NULL,
-    b_forca INT NOT NULL,
-    b_defesa INT NOT NULL,
-    b_carisma INT NOT NULL,
-    info VARCHAR(255)
-);
-
-CREATE TABLE extra_classe (
-    id_exclasse INT PRIMARY KEY,
-    tipo_exclasse TIPO_EXCLASSE NOT NULL,
-    b_inteligencia INT NOT NULL,
-    b_destreza INT NOT NULL,
-    b_sabedoria INT NOT NULL,
-    b_forca INT NOT NULL,
-    b_defesa INT NOT NULL,
-    b_carisma INT NOT NULL,
-    noble_phantasm INT REFERENCES habilidade_extra(id_habilidade_extra),
-    tipo_habilidade TIPO_HABILIDADE,
-    info VARCHAR(255),
-    CHECK(tipo_habilidade in ('noble_phantasm'))
-);
-        ''')
-
-        # criando tabelas mapa
-    cur.execute('''
-
-            CREATE TABLE mundo (
-    id_mundo INT PRIMARY KEY,
-    nome CHAR(50) NOT NULL,
-    descricao VARCHAR(255),
-    mundo_conecta INT,
-    mundo_conectado INT,
-    FOREIGN KEY (mundo_conecta) REFERENCES mundo(id_mundo),
-    FOREIGN KEY (mundo_conectado) REFERENCES mundo(id_mundo)
-);
-
-CREATE TABLE regiao (
-    id_regiao INT PRIMARY KEY,
-    nome CHAR(50) NOT NULL,
-    descricao VARCHAR(100),
-    mundo INT NOT NULL,
-    regiao_n INT,
-    regiao_s INT,
-    regiao_l INT,
-    regiao_o INT,
-    FOREIGN KEY (mundo) REFERENCES mundo(id_mundo),
-    FOREIGN KEY (regiao_n) REFERENCES regiao(id_regiao),
-    FOREIGN KEY (regiao_s) REFERENCES regiao(id_regiao),
-    FOREIGN KEY (regiao_l) REFERENCES regiao(id_regiao),
-    FOREIGN KEY (regiao_o) REFERENCES regiao(id_regiao)
-);
-
-CREATE table qtd_salas (
-    id_local INT PRIMARY KEY,
-    UNIQUE(id_local)
-);
-
-CREATE TABLE sala (
-    id_local INT REFERENCES qtd_salas(id_local),
-    tipo_local LOCAL_TIPO NOT NULL,
-    tamanho INT NOT NULL,
-	regiao INT NOT NULL,
-    local_n INT,
-    local_s INT,
-    local_l INT,
-    local_o INT,
-    FOREIGN KEY (regiao) REFERENCES regiao(id_regiao)
-);
-
-
-CREATE TABLE caverna (
-    local_caverna INT PRIMARY KEY,
-    nome CHAR(50) NOT NULL,
-    descricao VARCHAR(200) NOT NULL,
-    num_caverna INT NOT NULL,
-    FOREIGN KEY (local_caverna) REFERENCES qtd_salas(id_local)
-);
-
-CREATE TABLE masmorra (
-    local_masmorra INT PRIMARY KEY,
-    nome CHAR(50) NOT NULL,
-    descricao VARCHAR(200) NOT NULL,
-    num_masmorra INT NOT NULL,
-    ranque RANK_ NOT NULL,
-    FOREIGN KEY (local_masmorra) REFERENCES qtd_salas(id_local)
-);
-
-CREATE TABLE residencia (
-    residencia_npc INT PRIMARY KEY,
-    nome CHAR(50) NOT NULL,
-    descricao VARCHAR(200) NOT NULL,
-    ranque RANK_ NOT NULL,
-    tipo_residencia TIPO_RESIDENCIA NOT NULL,
-    recompor_mana INT,
-    recompor_vida INT,
-    tipo_loja TIPO_ITEM,
-    FOREIGN KEY (residencia_npc) REFERENCES qtd_salas(id_local)
-);
-
-            ''')
-
-    cur.execute('''
-            CREATE TABLE personagem (
-    id_personagem INT PRIMARY KEY,
-    nome CHAR(50) NOT NULL,
-    exp_atual INT NOT NULL,
-    exp_max INT NOT NULL,
-    classe INT REFERENCES classe(id_classe),
-    exclasse INT REFERENCES extra_classe(id_exclasse),
-    mana_max INT NOT NULL,
-    mana_atual INT NOT NULL,
-    vida_max INT NOT NULL,
-    vida_atual INT NOT NULL,
-    dinheiro INT,
-    localizacao INT NOT NULL,
-    FOREIGN KEY (localizacao) REFERENCES qtd_salas(id_local)
-);
-                    CREATE TABLE atributos (
-    personagem INT PRIMARY KEY,
-    inteligencia INT NOT NULL,
-    destreza INT NOT NULL,
-    sabedoria INT NOT NULL,
-    forca INT NOT NULL,
-    defesa INT NOT NULL,
-    carisma INT NOT NULL,
-    FOREIGN KEY (personagem) REFERENCES personagem(id_personagem)
-);
-        ''')
-
-    cur.execute('''
-
-                CREATE TABLE inimigo (
-    id_inimigo INT PRIMARY KEY,
-    tipo_inimigo TIPO_INIMIGO NOT NULL
-);
-
-CREATE TABLE inimigo_comum (
-    inimigo INT PRIMARY KEY,
-    nome CHAR(20) NOT NULL,
-    vida INT NOT NULL,
-    dano INT NOT NULL,
-    qtd_exp INT NOT NULL,
-    info VARCHAR(100),
-    ranque RANK_ NOT NULL,
-    FOREIGN KEY (inimigo) REFERENCES inimigo(id_inimigo)
-);
-                    
-               CREATE TABLE instancia_inimigo (
-    id_instancia_inimigo INT PRIMARY KEY,
-    inimigo INT NOT NULL,
-    tipo_inimigo TIPO_INIMIGO NOT NULL,
-    FOREIGN KEY (inimigo) REFERENCES inimigo(id_inimigo)
-);     
-
-        ''')
-    cur.execute('''
-
-CREATE TABLE local_inimigo (
-    sala INT REFERENCES qtd_salas(id_local),
-    inimigo INT REFERENCES instancia_inimigo(id_instancia_inimigo)
-);
-
-        ''')
+    # Criando as Tabelas do Jogo ------
+    ct.fuction_create_table(self)
+    ct.criar_enums(self)
+    ct.tabelas_habilidades(self)
+    ct.tabelas_classe(self)
+    ct.tabelas_mapa(self)
+    ct.tabelas_personagem(self)
+    ct.tabelas_he_iInimigo(self)
+    ct.tabela_item(self)
+    ct.tabelas_ch_ea(self)
+    ct.tabelas_mr_missao(self)
+    ct.tabelas_md_ri(self)
+    ct.tabelas_di_di(self)
     
-    cur.execute('''
-CREATE TABLE npc (
-    id_npc INT PRIMARY KEY,
-    nome CHAR(20) NOT NULL,
-    alinhamento ALIGN NOT NULL,
-    biografia VARCHAR(255),
-    residencia INT NOT NULL,
-    qtd_iteracao INT,
-    FOREIGN KEY (residencia) REFERENCES residencia(residencia_npc)
-);
-''')
+    # Criando Funções e Triggers ------
+    tf.create_functions_triggers(self)
     
     conn.commit()
     cur.close()
@@ -416,7 +208,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (27, 'masmorra', 29, 1, 28, 26, 30, 24),
 (28, 'caverna', 21, 1, 29, 27, NULL, 25),
 (29, 'grama', 12, 1, 30, 28, NULL, 26),
-(30, 'agua', 9, 1, NULL, 29, NULL, 27);
+(30, 'agua', 9, 1, 31, 29, NULL, 27);
 
 -- Adicionar cavernas, masmorras e residências
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES

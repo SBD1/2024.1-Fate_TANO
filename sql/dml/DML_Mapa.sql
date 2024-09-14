@@ -66,7 +66,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (27, 'masmorra', 29, 1, 28, 26, 30, 24),
 (28, 'caverna', 21, 1, 29, 27, NULL, 25),
 (29, 'grama', 12, 1, 30, 28, NULL, 26),
-(30, 'agua', 9, 1, NULL, 29, NULL, 27);
+(30, 'agua', 9, 1, 31, 29, NULL, 27);
 
 -- Adicionar cavernas, masmorras e residências
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
