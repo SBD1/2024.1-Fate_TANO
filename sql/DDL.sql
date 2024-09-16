@@ -1,11 +1,15 @@
 
 
 --- CREATES
-CREATE TYPE LOCAL_TIPO AS ENUM ('loja', 'pousada', 'oficina','grama', 'agua', 'ruina', 'buraco', 'caverna', 'masmorra','residencia');
+CREATE TYPE LOCAL_TIPO AS ENUM ('loja', 'pousada', 'oficina','grama', 'agua', 'ruina', 'fenda', 'caverna', 'masmorra','residencia');
 
 CREATE TYPE TIPO_RESIDENCIA AS ENUM ('loja', 'pousada', 'oficina');
 
 CREATE TYPE TIPO_CLASSE AS ENUM ('saber', 'lancer', 'archer', 'rider', 'caster', 'assassin', 'berserker');
+
+CREATE TYPE ATRIBUTOS AS ENUM ('for', 'dex', 'con', 'int', 'sab', 'car')
+
+CREATE TYPE PERICIAS AS ENUM ('atletismo_for', 'acrobacia_dex', 'furtividade_dex', 'prestidigitacao_dex', 'arcanismo_int', 'historia_int', 'investigacao_int', 'natureza_int', 'religiao_int', 'adestrar_animais_sab', 'intuicao_sab', 'medicina_sab', 'percepcao_sab', 'sobrevivencia_sab', 'atuacao_car', 'enganacao_car', 'intimidacao_car', 'persuasao_car')
 
 CREATE TYPE TIPO_EXCLASSE AS ENUM ('ruler', 'avenger', 'moon_cancer', 'alter_ego', 'foreigner', 'pretender', 'shielder', 'beast');
 
@@ -15,10 +19,10 @@ CREATE TYPE TIPO_HABILIDADE AS ENUM ('ativa', 'passiva', 'habilidade_especial', 
 
 CREATE TYPE ALIGN AS ENUM ('good', 'neutral', 'evil');
 
-CREATE TYPE TIPO_INIMIGO AS ENUM ('comum', 'elite', 'miniboss', 'boss', 'raid_boss', 'special', 'event');
+CREATE TYPE TIPO_INIMIGO AS ENUM ('comum', 'boss');
 
 
-CREATE TYPE TIPO_ITEM AS ENUM ('material', 'consumivel', 'acessorio', 'arma', 'armadura', 'artefato', 'item', 'magico');
+CREATE TYPE TIPO_ITEM AS ENUM ('material', 'consumivel', 'acessorio', 'arma', 'armadura');
 
 CREATE TYPE TIPO_MATERIAL AS ENUM ('lixo', 'mineral', 'raro', 'comum', 'toxico');
 
@@ -29,7 +33,9 @@ CREATE TYPE TIPO_ARMADURA AS ENUM ('cabeca', 'torso', 'mao_direita', 'mao_esquer
 CREATE TABLE habilidade (
     id_habilidade INT PRIMARY KEY,
     tipo_habilidade TIPO_HABILIDADE NOT NULL,
-    tipo_classe TIPO_CLASSE NOT NULL,
+    tipo_classe TIPO_CLASSE,
+    tipo_pericia1 PERICIAS,
+    tipo_pericia2 PERICIAS,
     numero INT NOT NULL,
     descricao VARCHAR(255),
     cooldown INT,
@@ -53,24 +59,27 @@ CREATE TABLE habilidade_extra (
 CREATE TABLE classe (
     id_classe INT PRIMARY KEY,
     tipo_classe TIPO_CLASSE NOT NULL,
-    b_inteligencia INT NOT NULL,
-    b_destreza INT NOT NULL,
-    b_sabedoria INT NOT NULL,
-    b_forca INT NOT NULL,
-    b_defesa INT NOT NULL,
-    b_carisma INT NOT NULL,
+    vida_base INT NOT NULL,
+    b_for INT NOT NULL,
+    b_dex INT NOT NULL,
+    b_con INT NOT NULL,
+    b_int INT NOT NULL,
+    b_sab INT NOT NULL,
+    b_car INT NOT NULL,
+    tipo1_proficiencia ATRIBUTOS,
+    tipo2_proficiencia ATRIBUTOS,
     info VARCHAR(255)
 );
 
 CREATE TABLE extra_classe (
     id_exclasse INT PRIMARY KEY,
     tipo_exclasse TIPO_EXCLASSE NOT NULL,
-    b_inteligencia INT NOT NULL,
-    b_destreza INT NOT NULL,
-    b_sabedoria INT NOT NULL,
-    b_forca INT NOT NULL,
-    b_defesa INT NOT NULL,
-    b_carisma INT NOT NULL,
+    b_for INT NOT NULL,
+    b_dex INT NOT NULL,
+    b_con INT NOT NULL,
+    b_int INT NOT NULL,
+    b_sab INT NOT NULL,
+    b_car INT NOT NULL,
     noble_phantasm INT REFERENCES habilidade_extra(id_habilidade_extra),
     tipo_habilidade TIPO_HABILIDADE,
     info VARCHAR(255),
@@ -166,14 +175,22 @@ CREATE TABLE personagem (
     FOREIGN KEY (localizacao) REFERENCES qtd_salas(id_local)
 );
 
+CREATE TABLE pericia (
+    personagem INT PRIMARY KEY,
+    pericia1 PERICIAS NOT NULL,
+    valor_pericia1 INT,
+    pericia2 PERICIAS NOT NULL,
+    valor_pericia2 INT
+);
+
 CREATE TABLE atributos (
     personagem INT PRIMARY KEY,
-    inteligencia INT NOT NULL,
-    destreza INT NOT NULL,
-    sabedoria INT NOT NULL,
-    forca INT NOT NULL,
-    defesa INT NOT NULL,
-    carisma INT NOT NULL,
+    _for INT NOT NULL,
+    _dex INT NOT NULL,
+    _con INT NOT NULL,
+    _int INT NOT NULL,
+    _sab INT NOT NULL,
+    _car INT NOT NULL,
     FOREIGN KEY (personagem) REFERENCES personagem(id_personagem)
 );
 
@@ -262,8 +279,6 @@ CREATE TABLE inimigo_boss (
     biografia VARCHAR(255),
     ranque RANK_ NOT NULL,
     tipo_exclasse TIPO_EXCLASSE NOT NULL,
-    vantagem INT NOT NULL,
-    desvantagem INT NOT NULL,
     FOREIGN KEY (inimigo) REFERENCES inimigo(id_inimigo)
 );
 
@@ -297,12 +312,12 @@ CREATE TABLE consumivel (
     ranque RANK_ NOT NULL,
     info VARCHAR(100),
     tipo_consumivel TIPO_CONSUMIVEL NOT NULL,
-    b_inteligencia INT NOT NULL,
-    b_destreza INT NOT NULL,
-    b_sabedoria INT NOT NULL,
-    b_forca INT NOT NULL,
-    b_defesa INT NOT NULL,
-    b_carisma INT NOT NULL,
+    b_for INT NOT NULL,
+    b_dex INT NOT NULL,
+    b_con INT NOT NULL,
+    b_int INT NOT NULL,
+    b_sab INT NOT NULL,
+    b_car INT NOT NULL,
     FOREIGN KEY (item) REFERENCES item(id_item)
 );
 
@@ -320,12 +335,12 @@ CREATE TABLE acessorio (
     ranque RANK_ NOT NULL,
     descricao VARCHAR(100),
     nivel INT NOT NULL,
-    b_inteligencia INT NOT NULL,
-    b_destreza INT NOT NULL,
-    b_sabedoria INT NOT NULL,
-    b_forca INT NOT NULL,
-    b_defesa INT NOT NULL,
-    b_carisma INT NOT NULL,
+    b_for INT NOT NULL,
+    b_dex INT NOT NULL,
+    b_con INT NOT NULL,
+    b_int INT NOT NULL,
+    b_sab INT NOT NULL,
+    b_car INT NOT NULL,
     habilidade_especial INT REFERENCES habilidade(id_habilidade),
     tipo_habilidade TIPO_HABILIDADE,
     FOREIGN KEY (item) REFERENCES item(id_item),
@@ -392,12 +407,12 @@ CREATE TABLE armadura (
     nivel INT NOT NULL,
     tipo_armadura TIPO_ARMADURA NOT NULL,
     tipo_classe TIPO_CLASSE NOT NULL,
-    b_inteligencia INT NOT NULL,
-    b_destreza INT NOT NULL,
-    b_sabedoria INT NOT NULL,
-    b_forca INT NOT NULL,
-    b_defesa INT NOT NULL,
-    b_carisma INT NOT NULL,
+    b_for INT NOT NULL,
+    b_dex INT NOT NULL,
+    b_con INT NOT NULL,
+    b_int INT NOT NULL,
+    b_sab INT NOT NULL,
+    b_car INT NOT NULL,
     tipo_habilidade TIPO_HABILIDADE,
 	habilidade_especial INT REFERENCES habilidade(id_habilidade),
     FOREIGN KEY (item) REFERENCES item(id_item),

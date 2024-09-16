@@ -53,20 +53,12 @@ def move_player(conn, direction):
     cur = conn.cursor()
 
     cur.execute('SELECT movimento_personagem(%s)', (direction,))
-
-    cur.execute('SELECT localizacao FROM personagem')
-    id_local = cur.fetchone()
-    conn.commit()
-    cur.close()
-    return f"Player moved {direction}{id_local}"
-
-def search_local(conn):
-    cur = conn.cursor()
+    movimento = cur.fetchone()
     cur.execute('SELECT s.id_local, s.local_n, s.local_s, s.local_l, s.local_o FROM sala s, personagem p WHERE s.id_local = p.localizacao')
     sala = cur.fetchone()
     conn.commit()
     cur.close()
-    return f"Player located in {sala[0]}\nNorth {sala[1]}\nSouth {sala[2]}\nEast {sala[3]}\nWest {sala[4]}"
+    return f"{movimento}\nPlayer located in {sala[0]}\nNorth {sala[1]}\nSouth {sala[2]}\nEast {sala[3]}\nWest {sala[4]}"
 
 # Interface gráfica
 class GameApp(tk.Tk):
@@ -104,7 +96,6 @@ class GameApp(tk.Tk):
         ttk.Button(self.game_frame, text="Move Down", command=lambda: self.move("down")).grid(row=1, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
         ttk.Button(self.game_frame, text="Move Left", command=lambda: self.move("left")).grid(row=2, column=0, padx=5, pady=5, sticky=tk.W+tk.E)
         ttk.Button(self.game_frame, text="Move Right", command=lambda: self.move("right")).grid(row=2, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
-        ttk.Button(self.game_frame, text="Ver Local", command=self.search_local).grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
         ttk.Button(self.game_frame, text="Pause", command=self.show_pause_screen).grid(row=4, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
         ttk.Button(self.game_frame, text="Menu Inicial", command=self.show_start_screen).grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
 
@@ -149,8 +140,6 @@ class GameApp(tk.Tk):
         if command.startswith("move"):
             direction = command.split()[1]
             response = move_player(conn, direction)
-        elif command == "search_local":
-            response = search_local(conn)
         else:
             response = "Unknown command."
         conn.close()
@@ -162,15 +151,6 @@ class GameApp(tk.Tk):
         self.status_text.delete(1.0, tk.END)
         self.status_text.tag_add("center", "1.0", "end")
         command = f"move {direction}"
-        self.send_game_command(command)
-        self.status_text.config(state=tk.DISABLED)
-
-    def search_local(self):
-        """Ataca um inimigo."""
-        self.status_text.config(state=tk.NORMAL)
-        self.status_text.delete(1.0, tk.END)
-        self.status_text.tag_add("center", "1.0", "end")
-        command = "search_local"
         self.send_game_command(command)
         self.status_text.config(state=tk.DISABLED)
 

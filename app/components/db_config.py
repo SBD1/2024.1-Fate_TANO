@@ -1,6 +1,7 @@
 import psycopg2
 from components import criar_tabelas as ct
 from components import triggers_functions as tf
+from components import set_sps as ss
 
 def get_game_db_connection(game_number):
     db_name = f'game_{game_number}_db'
@@ -16,7 +17,8 @@ def delete(self):
     conn = get_game_db_connection(self.game_number)
     cur = conn.cursor()
 
-    cur.execute('SELECT drop_all();')
+    cur.execute('SELECT drop_all_types();')
+    cur.execute('SELECT drop_all_tabelas();')
 
     conn.commit()
     cur.close()
@@ -42,6 +44,9 @@ def criar_tabelas(self):
     
     # Criando Funções e Triggers ------
     tf.create_functions_triggers(self)
+
+    # Criando Stored Procedures ------
+    ss.set_sps(self)
     
     conn.commit()
     cur.close()
@@ -53,7 +58,7 @@ def inseri_tabelas(self):
 
     # habilidades
     cur.execute(''' 
-             INSERT INTO habilidade (id_habilidade, tipo_habilidade, tipo_classe, numero, descricao, cooldown, custo_mana, ranque) 
+INSERT INTO habilidade (id_habilidade, tipo_habilidade, tipo_classe, numero, descricao, cooldown, custo_mana, ranque) 
 VALUES
 (1, 'ativa', 'saber', 1, 'Corte Rápido', 5, 10, 'a'),
 (2, 'passiva', 'lancer', 2, 'Agressividade Natural', NULL, 0, 'b'),
@@ -251,8 +256,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (46, 'caverna', 18, 2, 47, 45, 48, 42),
 (47, 'masmorra', 24, 2, 48, 46, 49, 43),
 (48, 'grama', 12, 2, 49, 47, 50, 44),
-(49, 'agua', 10, 2, 50, 48, NULL, 45),
-(50, 'ruina', 13, 2, NULL, 49, NULL, 46);
+(49, 'agua', 10, 2, 50, 48, NULL, 45);
 
 -- Adicionar cavernas, masmorras e residências
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -284,7 +288,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (54, 'caverna', 18, 3, 55, 53, 50, 52),
 (55, 'masmorra', 22, 3, 56, 54, 51, 53),
 (56, 'residencia', 30, 3, 57, 55, 52, 54),
-(57, 'agua', 19, 3, 58, 56, 58, 55),
+(57, 'agua', 19, 3, 58, 56, NULL, 55),
 (58, 'grama', 13, 3, 59, 57, 60, 56),
 (59, 'ruina', 16, 3, 60, 58, 61, 57),
 (60, 'buraco', 10, 3, 61, 59, 62, 58),
@@ -298,7 +302,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (68, 'caverna', 20, 3, 69, 67, 70, 66),
 (69, 'masmorra', 27, 3, 70, 68, 71, 67),
 (70, 'residencia', 22, 3, 71, 69, NULL, 68),
-(71, 'agua', 18, 3, NULL, 70, NULL, 69);
+(71, 'agua', 18, 3, NULL, 70, 72, 69);
 
 -- Adicionar cavernas, masmorras e residências
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -346,7 +350,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (93, 'agua', 11, 4, NULL, 92, 91, 89),
 (94, 'ruina', 14, 4, NULL, 93, 92, 90),
 (95, 'buraco', 10, 4, NULL, 94, 93, 91),
-(96, 'caverna', 18, 4, NULL, 95, 94, 92);
+(96, 'caverna', 18, 4, 97, 95, 94, 92);
 
 -- Adicionar cavernas, masmorras e residências
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -386,7 +390,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (113, 'caverna', 39, 5, 114, 116, 115, 112),
 (114, 'caverna', 41, 5, 115, NULL, 116, 113),
 (115, 'caverna', 43, 5, 116, NULL, NULL, 114),
-(116, 'caverna', 45, 5, NULL, NULL, NULL, 115);
+(116, 'caverna', 45, 5, NULL, 117, NULL, 115);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -428,7 +432,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (135, 'ruina', 65, 6, 136, 138, 137, 134),
 (136, 'ruina', 67, 6, 137, NULL, 138, 135),
 (137, 'ruina', 70, 6, 138, NULL, NULL, 136),
-(138, 'ruina', 72, 6, NULL, NULL, NULL, 137);
+(138, 'ruina', 72, 6, NULL, 139, NULL, 137);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -469,7 +473,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (156, 'ruina', 64, 7, 157, 159, 158, 155),
 (157, 'ruina', 66, 7, 158, NULL, 159, 156),
 (158, 'ruina', 68, 7, 159, NULL, NULL, 157),
-(159, 'ruina', 70, 7, NULL, NULL, NULL, 158);
+(159, 'ruina', 70, 7, NULL, NULL, 160, 158);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -509,7 +513,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (176, 'ruina', 60, 8, 177, 179, 178, 175),
 (177, 'ruina', 62, 8, 178, NULL, 179, 176),
 (178, 'ruina', 64, 8, 179, NULL, NULL, 177),
-(179, 'ruina', 66, 8, NULL, NULL, NULL, 178);
+(179, 'ruina', 66, 8, 180, NULL, NULL, 178);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -549,7 +553,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (196, 'grama', 52, 9, 197, 199, 198, 195),
 (197, 'grama', 54, 9, 198, NULL, 199, 196),
 (198, 'grama', 56, 9, 199, NULL, NULL, 197),
-(199, 'grama', 58, 9, NULL, NULL, NULL, 198);
+(199, 'grama', 58, 9, NULL, 200, NULL, 198);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -590,7 +594,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (217, 'ruina', 56, 10, 218, 220, 219, 216),
 (218, 'ruina', 58, 10, 219, NULL, 220, 217),
 (219, 'ruina', 60, 10, NULL, NULL, NULL, 218),
-(220, 'ruina', 62, 10, NULL, NULL, NULL, 219);
+(220, 'ruina', 62, 10, NULL, 221, NULL, 219);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -631,9 +635,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (238, 'buraco', 54, 11, 239, 241, 240, 237),
 (239, 'buraco', 56, 11, 240, 242, 241, 238),
 (240, 'buraco', 58, 11, 241, NULL, 242, 239),
-(241, 'buraco', 60, 11, NULL, NULL, NULL, 240),
-(242, 'buraco', 62, 11, NULL, NULL, NULL, 241);
-
+(241, 'buraco', 60, 11, NULL, 242, NULL, 240);
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
 (224, 'Caverna dos Ecos Perdidos', 'Uma caverna onde ecos de almas antigas são ouvidos.', 31),
@@ -672,8 +674,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (258, 'agua', 47, 12, 259, 261, 260, 257),
 (259, 'agua', 49, 12, 260, 262, 261, 258),
 (260, 'agua', 51, 12, 261, 263, 262, 259),
-(261, 'agua', 53, 12, 262, NULL, 263, 260),
-(262, 'agua', 55, 12, NULL, NULL, NULL, 261);
+(261, 'agua', 53, 12, 262, NULL, 263, 260);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -713,8 +714,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (278, 'grama', 44, 13, 279, 281, 280, 277),
 (279, 'grama', 46, 13, 280, 282, 281, 278),
 (280, 'grama', 48, 13, 281, 283, 282, 279),
-(281, 'grama', 50, 13, 282, 284, 283, 280),
-(282, 'grama', 52, 13, 283, 285, 284, 281);
+(281, 'grama', 50, 13, 282, 284, 283, 280);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -795,8 +795,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (319, 'grama', 47, 15, 320, 323, 322, 318),
 (320, 'grama', 49, 15, 321, 324, 323, 319),
 (321, 'grama', 51, 15, 322, 325, 324, 320),
-(322, 'grama', 53, 15, 323, 326, 325, 321),
-(323, 'grama', 55, 15, 324, NULL, 326, 322);
+(322, 'grama', 53, 15, 323, 326, 325, 321);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -835,8 +834,7 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (338, 'buraco', 90, 16, 339, 342, 341, 337),
 (339, 'buraco', 92, 16, 340, 343, 342, 338),
 (340, 'buraco', 94, 16, 341, 344, 343, 339),
-(341, 'buraco', 96, 16, 342, 345, 344, 340),
-(342, 'buraco', 98, 16, 343, NULL, 345, 341);
+(341, 'buraco', 96, 16, 342, 345, 344, 340);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES
@@ -876,7 +874,8 @@ INSERT INTO sala (id_local, tipo_local, tamanho, regiao, local_n, local_s, local
 (358, 'caverna', 82, 17, 359, 362, 361, 357),
 (359, 'caverna', 84, 17, 360, 363, 362, 358),
 (360, 'caverna', 86, 17, 361, 364, 363, 359),
-(361, 'caverna', 88, 17, 362, NULL, 364, 360);
+(361, 'caverna', 88, 17, 362, NULL, 364, 360),
+(362, 'caverna', 88, 17, NULL, 361, NULL, NULL);
 
 -- Adicionar cavernas e masmorras
 INSERT INTO caverna (local_caverna, nome, descricao, num_caverna) VALUES

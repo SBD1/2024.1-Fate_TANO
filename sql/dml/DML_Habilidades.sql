@@ -1,3 +1,5 @@
+
+
 --- Habilidades
 
 INSERT INTO habilidade (id_habilidade, tipo_habilidade, tipo_classe, numero, descricao, cooldown, custo_mana, ranque) 
