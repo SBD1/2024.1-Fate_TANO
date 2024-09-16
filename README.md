@@ -1,7 +1,7 @@
 # Trabalho Banco de Dados 1 - Fate/The Awakening of a New Order
 
-<div style="diplay: flex; justify-content: center; width: auto; height: auto; overflow: hidden;">
-  <img src="/assets/idea5.webp" alt="MREL v1.0" style="width:50%; margin-left: 25%; margin-right: 25%;"/>
+<div style="width: auto; height: auto; overflow: hidden;">
+  <img src="/assets/idea5.webp" alt="Logo" style="width: 50%; height: 50%; margin-left: 25%; margin-right: 25%;"/>
 </div>
 
 ## Nome:
@@ -54,8 +54,8 @@ Para desinstalar o jogo basta rodar ```./install.sh desinstalar```.
     - [x] done
   - [Modelo Relacional](/docs/rascunhoMREL.md)
     - [ ] to do
-    - [x] doing
-    - [ ] done
+    - [ ] doing
+    - [x] done
   - Dicionário de Dados
     - [ ] to do
     - [x] doing
@@ -80,17 +80,17 @@ Para desinstalar o jogo basta rodar ```./install.sh desinstalar```.
     - [ ] to do
     - [x] doing
     - [ ] done
-  - DQL
-    - [x] to do
-    - [ ] doing
+  - [DQL](/sql/DQL.sql)
+    - [ ] to do
+    - [x] doing
     - [ ] done
 - Módulo 3:
-  - [x] to do
-  - [ ] doing
+  - [ ] to do
+  - [x] doing
   - [ ] done
-  - Triggers e Stored Procedures
-    - [x] to do
-    - [ ] doing
+  - [Triggers e Stored Procedures](/docs/rascunhoTSP.md)
+    - [ ] to do
+    - [x] doing
     - [ ] done
   - Views
     - [x] to do
