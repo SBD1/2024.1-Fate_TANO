@@ -74,7 +74,7 @@ Para desinstalar o jogo basta rodar ```./install.sh desinstalar```.
     - [ ] to do
     - [ ] doing
     - [x] done
-  - [DML](/sql/DML.sql)
+  - [DML](/docs/rascunhoDML.md)
     - [ ] to do
     - [x] doing
     - [ ] done
