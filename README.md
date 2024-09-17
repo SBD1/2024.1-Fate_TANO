@@ -1,8 +1,6 @@
 # Trabalho Banco de Dados 1 - Fate/The Awakening of a New Order
 
-<div style="width: auto; height: auto; overflow: hidden;">
-  <img src="/assets/idea5.webp" alt="Logo" style="width: 50%; height: 50%; margin-left: 25%; margin-right: 25%;"/>
-</div>
+<img src="/assets/idea5.webp" alt="Logo" width="256" height="256"/>
 
 ## Nome:
     - Fate/The Awakening of a New Order
