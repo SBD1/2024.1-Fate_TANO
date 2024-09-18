@@ -1,24 +1,21 @@
 # Trabalho Banco de Dados 1 - Fate/The Awakening of a New Order
 
-<img src="/assets/idea5.webp" alt="Logo" width="256" height="256"/>
+<img src="https://drive.google.com/uc?export=view&id=1C5boIEAAZ4iLIwilx4CK9TMm5IHSHIIS" alt="Logo" width="256" height="256"/>
+
 
 ## Nome:
     - Fate/The Awakening of a New Order
 
 ## Descrição:
 
-<div style="align-items: center; width: auto; height:auto; overflow:hidden;">
-  <img src="/assets/Fate_Works_Relations.png" alt="MREL v1.0" style="width:100%;"/>
-</div>
+<img src="https://github.com/LeviQ27/assets_trabsbd1/blob/main/Fate_Works_Relations.png" alt="Fate Series"/>
 
+<img src="https://github.com/LeviQ27/assets_trabsbd1/blob/main/descricao_jogo_fate_tano-1.png" alt="descricao part 1"/>
 
-<div style="align-items: center; width: auto; height:auto; overflow:hidden;">
-  <img src="/assets/rascunhoTrabalho-1.png" alt="MREL v1.0" style="width:100%;"/>
-</div>
+<img src="https://github.com/LeviQ27/assets_trabsbd1/blob/main/descricao_jogo_fate_tano-2.png" alt="descricao part 2"/>
 
-<div style="align-items: center; width: auto; height:auto; overflow:hidden;">
-  <img src="/assets/rascunhoTrabalho-2.png" alt="MREL v1.0" style="width:100%;"/>
-</div>
+<img src="https://github.com/LeviQ27/assets_trabsbd1/blob/main/descricao_jogo_fate_tano-3.png" alt="descricao part 3"/>
+<a href="http://www.freepik.com">Designed by rawpixel.com / Freepik</a>
 
 ## Como Jogar
 

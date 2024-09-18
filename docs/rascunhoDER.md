@@ -3,13 +3,13 @@
 ## Primeira versão do diagrama
 
 <div style="align-items: center; width: auto;">
-    <img src="/assets/DER_v1.png" alt="DER v1.0" width="600" height="369">
+    <img src="https://drive.google.com/uc?export=view&id=1U_b6JwsH0X3BoLOXi78OY1P-T5zKzMtA" alt="DER v1.0" width="600" height="369">
 </div>
 
 ## Segundo versão do diagrama
 
 <div style="align-items: center; width: auto; height:auto; overflow:hidden;">
-  <img src="/assets/DER_v2_2.png" alt="DER v2.2" style="width:100%;"/>
+  <img src="https://drive.google.com/uc?export=view&id=1nvP9fzHHRZbKhhpcoa9AtUl-VF2WEwak" alt="DER v2.2" style="width:100%;"/>
 </div>
 
 
