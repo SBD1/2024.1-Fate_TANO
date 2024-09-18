@@ -21,7 +21,6 @@ CREATE TYPE ALIGN AS ENUM ('good', 'neutral', 'evil');
 
 CREATE TYPE TIPO_INIMIGO AS ENUM ('comum', 'boss');
 
-
 CREATE TYPE TIPO_ITEM AS ENUM ('material', 'consumivel', 'acessorio', 'arma', 'armadura');
 
 CREATE TYPE TIPO_MATERIAL AS ENUM ('lixo', 'mineral', 'raro', 'comum', 'toxico');

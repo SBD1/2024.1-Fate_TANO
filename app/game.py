@@ -2,6 +2,7 @@ import psycopg2
 import tkinter as tk
 from tkinter import ttk
 from components import db_config
+from components import game_function as gf
 
 # Função para criar um banco de dados se ele não existir
 def create_database_if_not_exists(db_name):
@@ -58,15 +59,38 @@ def move_player(conn, direction):
     sala = cur.fetchone()
     conn.commit()
     cur.close()
-    return f"{movimento}\nPlayer located in {sala[0]}\nNorth {sala[1]}\nSouth {sala[2]}\nEast {sala[3]}\nWest {sala[4]}"
+    sala = tuple('x' if valor is None else valor for valor in sala)
+    return f"""-
+-                                   {movimento[0]:^10}
+-
+-                                      North
+-                                      
+-                                    {sala[1]:^10}
+-
+-                     West {sala[4]:>10}{sala[0]:^10}{sala[3]:<10} East
+-
+-                                    {sala[2]:^10}
+-                                      
+-                                      South
+-
+"""
 
 # Interface gráfica
 class GameApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
+        largura_tela = self.winfo_screenwidth()
+        altura_tela = self.winfo_screenheight()
+
+        proporcao_largura = 0.3
+        proporcao_altura = 0.6
+
+        largura_tela = int(largura_tela * proporcao_largura)
+        altura_tela = int(altura_tela * proporcao_altura)
+
         self.title("Fate - The Awakening of The New Order")
-        self.geometry("500x400")
+        self.geometry(f"{largura_tela}x{altura_tela}")
 
         self.game_number = None
 
@@ -75,22 +99,24 @@ class GameApp(tk.Tk):
         self.start_frame.grid(row=0, column=0, sticky="nsew")
 
         # Configurar as colunas e linhas para expandir
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        for i in range(11):
+            self.grid_columnconfigure(i, weight=10)
+            self.grid_rowconfigure(i, weight=10)
 
+        ttk.Label(self.start_frame).grid(row=0, column=0, padx=150, pady=50)
+        ttk.Label(self.start_frame).grid(row=7, column=4, columnspan=2, padx=10, pady=10)
         start_label = ttk.Label(self.start_frame, text="Fate - The Awakening of The New Order")
-        start_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+        start_label.grid(row=5, column=2, columnspan=10, padx=10, pady=10, sticky=tk.E+tk.W)
 
-        ttk.Button(self.start_frame, text="Criar Novo Jogo", command=self.create_new_game).grid(row=1, column=0, padx=10, pady=10)
-        ttk.Button(self.start_frame, text="Carregar Jogo", command=self.load_game).grid(row=1, column=1, padx=10, pady=10)
-        ttk.Button(self.start_frame, text="Deletar Jogo", command=self.delete_game).grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+        ttk.Button(self.start_frame, text="Criar Novo Jogo", command=self.create_new_game).grid(row=6, column=4, padx=10, pady=10, sticky=tk.E+tk.W)
+        ttk.Button(self.start_frame, text="Carregar Jogo", command=self.load_game).grid(row=6, column=5, padx=10, pady=10, sticky=tk.E+tk.W)
+        ttk.Button(self.start_frame, text="Deletar Jogo", command=self.delete_game).grid(row=8, column=4, columnspan=2, padx=10, pady=10, sticky=tk.E+tk.W)
 
         # Frame de jogo
         self.game_frame = ttk.Frame(self)
 
-        self.status_text = tk.Text(self.game_frame, height=10, width=50, state=tk.DISABLED)
-        self.status_text.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
+        self.status_text = tk.Text(self.game_frame, height=16, width=80, state=tk.DISABLED)
+        self.status_text.grid(row=0, column=0, columnspan=10, padx=50, pady=5)
 
         ttk.Button(self.game_frame, text="Move Up", command=lambda: self.move("up")).grid(row=1, column=0, padx=5, pady=5, sticky=tk.W+tk.E)
         ttk.Button(self.game_frame, text="Move Down", command=lambda: self.move("down")).grid(row=1, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
